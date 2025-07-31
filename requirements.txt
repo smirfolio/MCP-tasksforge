@@ -1,0 +1,5 @@
+mcp[cli]
+requests
+python-dotenv
+httpx
+PyJWT[crypto]

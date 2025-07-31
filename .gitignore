@@ -1,0 +1,9 @@
+# Python
+
+mcpserver/
+__pycache__/
+*.pyc
+
+.env
+
+project_logs/
