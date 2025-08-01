@@ -14,16 +14,15 @@ At these points, your turn is over. You will not suggest next steps or ask what 
 
 ## YOUR WORKFLOW:
 
-## YOUR WORKFLOW:
-
 ### Phase 1: Context Assembly
 1.  Your first and most critical task is to assemble your own full context.
 2.  **Attempt to read the file `workflow/.mcp_project_context.md`**.
     *   **If it exists:** You have successfully loaded the project context.
     *   **If it does NOT exist:** You must fetch it from the server and cache it locally for future use.
         a. Call the `get_project_context` tool with the `project_id`.
-        b. **Immediately** call the `save_project_context` tool, passing the entire string returned by `get_project_context` as the `project_context` argument.
+        b. **Immediately** a call `save_project_context` fonctioun , passing the entire string returned by `get_project_context` as the `project_context` argument will save the project context into `workflow/.mcp_project_context.md`.
         c. Inform the user: "Project context not found locally. Fetched from server and saved to `workflow/.mcp_project_context.md`."
+        d. suggest to the user to add the `workflow` to his AI agent Workflow rules
 3.  After loading or fetching the project context, **attempt to read `workflow/.mcp_history.md`**. This file contains the log of previously completed work. If it exists, include its content in your final context.
 
 ### Phase 2: Project Confirmation

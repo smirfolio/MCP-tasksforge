@@ -9,10 +9,6 @@ from mcp.server.fastmcp import FastMCP
 
 load_dotenv()
 
-# --- Setup ---
-LOGS_DIR = Path("project_logs")
-LOGS_DIR.mkdir(exist_ok=True) # Ensure the logs directory exists
-
 # --- Logging and Server Setup (no change) ---
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logging.info('[Setup] Initializing server...')
@@ -37,9 +33,18 @@ def read_file_content(file_path: Path) -> str | None:
         return None
 
 def write_file_content(file_path: Path, content: str, append: bool = False) -> bool:
-    """Safely writes content to a file. Returns True on success, False on failure."""
+    """
+    Safely writes content to a file, creating parent directories if needed.
+    Returns True on success, False on failure.
+    """
     mode = "a" if append else "w"
     try:
+        # --- THIS IS THE FIX ---
+        # Ensure the parent directory (e.g., 'workflow') exists before writing.
+        # parents=True: Creates any missing parent directories (like mkdir -p).
+        # exist_ok=True: Prevents an error if the directory already exists.
+        file_path.parent.mkdir(parents=True, exist_ok=True)
+        
         with open(file_path, mode, encoding="utf-8") as f:
             f.write(content)
         return True
@@ -67,6 +72,23 @@ def load_system_prompt():
     except FileNotFoundError:
         logging.error("[Critical] The 'prompt_implement_user_stories.md' file was not found.")
         return "ERROR: System prompt file not found. Please contact the administrator."
+
+def save_project_context(project_context: str) -> str:
+    """
+    Saves the provided project context string to a standard file in the project directory.
+    """
+    logging.info("[Tool:save_project_context] Called to save project context locally.")
+    project_directory = os.getenv("PROJECT_DIRECTORY")
+    if not project_directory or not is_safe_project_path(project_directory):
+        return "Error: Cannot save context. The project_directory is invalid or not set."
+
+    context_file_path = Path(project_directory).resolve() / WORKFLOW_DIR_NAME / CONTEXT_FILENAME
+
+    if write_file_content(context_file_path, project_context):
+        logging.info(f"Successfully saved project context to {context_file_path}")
+        return f"Success: Project context saved locally to {CONTEXT_FILENAME}."
+    else:
+        return "Error: A server-side error occurred while trying to save the project context."
 
 # --- MCP Tools ---
 @mcp.tool()
@@ -124,26 +146,8 @@ async def get_project_context(project_id: int) -> str:
     
     # This tool now ONLY returns the fetched context.
     # The client/agent is responsible for combining it with other local files.
+    save_project_context(project_context_str)
     return project_context_str
-
-#--- 2. NEW TOOL TO SAVE THE CONTEXT ---
-@mcp.tool()
-def save_project_context(project_context: str) -> str:
-    """
-    Saves the provided project context string to a standard file in the project directory.
-    """
-    logging.info("[Tool:save_project_context] Called to save project context locally.")
-    project_directory = os.getenv("PROJECT_DIRECTORY")
-    if not project_directory or not is_safe_project_path(project_directory):
-        return "Error: Cannot save context. The project_directory is invalid or not set."
-
-    context_file_path = Path(project_directory).resolve() / WORKFLOW_DIR_NAME / CONTEXT_FILENAME
-
-    if write_file_content(context_file_path, project_context):
-        logging.info(f"Successfully saved project context to {context_file_path}")
-        return f"Success: Project context saved locally to {CONTEXT_FILENAME}."
-    else:
-        return "Error: A server-side error occurred while trying to save the project context."
     
 @mcp.tool()
 def log_task_completion(completion_report: str) -> str: # No longer needs project_id
