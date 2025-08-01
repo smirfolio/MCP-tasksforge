@@ -6,4 +6,5 @@ __pycache__/
 
 .env
 
-project_logs/
+workflow/.mcp_history.md
+workflow/.mcp_project_context.md
