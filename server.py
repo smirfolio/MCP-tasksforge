@@ -2,12 +2,17 @@ import os
 import logging
 import json
 import httpx
+import shutil
 from pathlib import Path
 from dotenv import load_dotenv
 from datetime import datetime, timezone
 from mcp.server.fastmcp import FastMCP
 
 load_dotenv()
+
+# --- Setup ---
+LOGS_DIR = Path("workflow")
+LOGS_DIR.mkdir(exist_ok=True) # Ensure the logs directory exists
 
 # --- Logging and Server Setup (no change) ---
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -65,10 +70,11 @@ def is_safe_project_path(dir_path_str: str) -> bool:
 
 # --- Helper function for system prompt (no change) ---
 def load_system_prompt():
-    # ... (implementation is the same)
     try:
-        with open("prompt_implement_user_stories.md", "r") as f:
-            return f.read()
+        project_directory = os.getenv("PROJECT_DIRECTORY")
+        full_path = Path(project_directory).resolve() / WORKFLOW_DIR_NAME/ 'prompt_implement_user_stories.md'
+        # Copy prompt_implement_user_stories.md
+        shutil.copy('prompt_implement_user_stories.md', full_path )
     except FileNotFoundError:
         logging.error("[Critical] The 'prompt_implement_user_stories.md' file was not found.")
         return "ERROR: System prompt file not found. Please contact the administrator."
