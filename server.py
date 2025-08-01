@@ -102,7 +102,7 @@ async def get_project_context(project_id: int) -> str:
     # Get config from environment
     project_directory = os.getenv("PROJECT_DIRECTORY")
     secret_key = os.getenv("SECRET_KEY")
-    PROJECT_API_URL = os.getenv("PROJECT_API_URL")
+    PROJECT_API_URL = os.getenv("PROJECT_API_URL", "https://tasksforge.ai/api/mcpproject")
 
     # Validate config and path
     if not all([project_directory, secret_key, PROJECT_API_URL]):
