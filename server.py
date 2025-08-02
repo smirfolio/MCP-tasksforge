@@ -58,6 +58,21 @@ def is_safe_project_path(dir_path_str: str) -> bool:
     except Exception: return False
     return True
 
+def save_project_context(project_context: str) -> str:
+    """Saves the project context to a standard file in the project's workflow directory."""
+    logging.info("[Tool:save_project_context] Called.")
+    project_directory = os.getenv("PROJECT_DIRECTORY")
+
+    if not project_directory or not is_safe_project_path(project_directory):
+        return "Error: Cannot save context. The project_directory is invalid or not set."
+
+    context_file_path = Path(project_directory).resolve() / WORKFLOW_DIR_NAME / CONTEXT_FILENAME
+    
+    if write_file_content(context_file_path, project_context):
+        return f"Success: Project context saved locally to {context_file_path.relative_to(project_directory)}."
+    else:
+        return "Error: Failed to save the project context."
+
 # --- SERVER LIFESPAN MANAGER ---
 @asynccontextmanager
 async def server_lifespan(server: FastMCP) -> AsyncIterator[None]:
@@ -127,42 +142,28 @@ async def get_project_context(project_id: int) -> str:
     except httpx.RequestError as e:
         return f"Error: Could not retrieve project data from API: {e}"
 
-    return f"""
-# PROJECT CONTEXT
+    project_context =  f"""
+            # PROJECT CONTEXT
 
-## Project Name
-{project_data.get('name', 'N/A')}
-## High-Level Description
-{project_data.get('description', 'N/A')}
-## Elaborated Description & Advice
-{project_data.get('elaborated_description', 'N/A')}
-## Key Features
-{project_data.get('key_features', 'N/A')}
-## Core Requirements
-{project_data.get('elaborated_core_requirements', 'N/A')}
-## User Stories
-{project_data.get('elaborated_user_stories', 'N/A')}
-## Detailed Task List
-```json
-{json.dumps(project_data.get('tasks_list', []), indent=2)}
-```
-"""
-
-@mcp.tool()
-def save_project_context(project_context: str) -> str:
-    """Saves the project context to a standard file in the project's workflow directory."""
-    logging.info("[Tool:save_project_context] Called.")
-    project_directory = os.getenv("PROJECT_DIRECTORY")
-
-    if not project_directory or not is_safe_project_path(project_directory):
-        return "Error: Cannot save context. The project_directory is invalid or not set."
-
-    context_file_path = Path(project_directory).resolve() / WORKFLOW_DIR_NAME / CONTEXT_FILENAME
-    
-    if write_file_content(context_file_path, project_context):
-        return f"Success: Project context saved locally to {context_file_path.relative_to(project_directory)}."
-    else:
-        return "Error: Failed to save the project context."
+            ## Project Name
+            {project_data.get('name', 'N/A')}
+            ## High-Level Description
+            {project_data.get('description', 'N/A')}
+            ## Elaborated Description & Advice
+            {project_data.get('elaborated_description', 'N/A')}
+            ## Key Features
+            {project_data.get('key_features', 'N/A')}
+            ## Core Requirements
+            {project_data.get('elaborated_core_requirements', 'N/A')}
+            ## User Stories
+            {project_data.get('elaborated_user_stories', 'N/A')}
+            ## Detailed Task List
+            ```json
+            {json.dumps(project_data.get('tasks_list', []), indent=2)}
+            ```
+        """
+    save_project_context(project_context)
+    return project_context
 
 @mcp.tool()
 def log_task_completion(completion_report: str) -> str:

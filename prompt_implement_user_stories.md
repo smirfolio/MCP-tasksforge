@@ -20,7 +20,7 @@ At these points, your turn is over. You will not suggest next steps or ask what 
     *   **If it exists:** You have successfully loaded the project context.
     *   **If it does NOT exist:** You must fetch it from the server and cache it locally for future use.
         a. Call the `get_project_context` tool with the `project_id`.
-        b. **Immediately** a call `save_project_context` fonctioun , passing the entire string returned by `get_project_context` as the `project_context` argument will save the project context into `workflow/.mcp_project_context.md`.
+        b. **Immediately** a call `save_project_context` fonction , passing the entire string returned by `get_project_context` as the `project_context` argument will save the project context into `workflow/.mcp_project_context.md`.
         c. Inform the user: "Project context not found locally. Fetched from server and saved to `workflow/.mcp_project_context.md`."
         d. suggest to the user to add the `workflow` to his AI agent Workflow rules
 3.  After loading or fetching the project context, **attempt to read `workflow/.mcp_history.md`**. This file contains the log of previously completed work. If it exists, include its content in your final context.
@@ -29,7 +29,9 @@ At these points, your turn is over. You will not suggest next steps or ask what 
 1.  Once all context is assembled, provide your first response to the user.
 2.  State the project title: `Project title: <Project Name>`.
 3.  Provide a brief, high-level analysis (2-4 sentences).
-4.  Conclude **EXACTLY** with: `Ready to proceed`.
+4.  **Attempt to read the file `.mcp_history.md`**.
+    *   **If it exists:** Provide the actual project progression report, already implemented user story, and remaining user stories.   
+5.  Conclude **EXACTLY** with: `Ready to proceed`.
 5.  **Then, you MUST STOP. Await the user's next command.**
 
 
@@ -89,23 +91,23 @@ Use only the core package manager (e.g., npm for Node.js projects, or deno for D
 Do not suggest or use any framework-specific initialization tools unless they are explicitly listed in the BOM.
 Provide step-by-step instructions for setting up the project structure manually if necessary.
 5. Formulating a Plan
-Before starting to implement any user story, think step-by-step and formulate a plan.
-Double-check to ensure that your plan does not include anything that is out of scope for that story.
+    - Before starting to implement any user story, think step-by-step and formulate a plan.
+    - Consult the **Detailed Task List** Json section and focus on the tasks realted to the current user story to have more context on how to implement the user story folow the task instruction and any webflow it described. 
+    - Double-check to ensure that your plan does not include anything that is out of scope for that story.
 6. Incremental Implementation
 Implement the story incrementally by following these steps:
 
-Propose the next small, logical part of the story to implement.
-Wait for my confirmation before proceeding.
-Implement only that small part.
-Run the linter (e.g., npm run lint) after each increment to ensure that there are no linting errors. Fix any errors before proceeding.
-Provide the changes for that part and ask me to verify.
-Wait for my confirmation.
-After I confirm, ask if everything looks good.
-If I confirm it looks good, either:
-a. If there are more increments, tell me what the next increment will be and go back to step 1.
-b. If the user story is complete, inform me and ask if I'd like to move on to the next user story (if there is one).
+- Propose the next small, logical part of the story to implement.
+- Wait for my confirmation before proceeding.
+- Implement only that small part.
+- Run the linter (e.g., npm run lint) after each increment to ensure that there are no linting errors. Fix any errors before proceeding.
+- Provide the changes for that part and ask me to verify.
+- Wait for my confirmation.
+- After I confirm, ask if everything looks good.
+  *   **If I confirm it looks good**, either:
+    a. If there are more increments, tell me what the next increment will be and go back to step 1.
+    b. If the user story is complete, inform me and ask if I'd like to move on to the next user story (if there is one).
 Repeat this process until the entire user story is implemented.
-
 7. Review and Confirmation
 Always double-check your work before moving on to the next part of the story.
 8. Confirmation of Instructions
@@ -114,7 +116,7 @@ Let me know that you're following these instructions by saying:
 "I'm following your instructions for implementing user stories. I'll focus on core tools and dependency management using the project's dependency file and the provided BOM, create a plan, and implement incrementally, step-by-step, waiting for your confirmation at each stage. I'll use the core package manager for managing dependencies and avoid framework-specific tools unless explicitly specified in the BOM. After each increment, I'll ask if everything looks good and inform you of the next steps."
 
 ### Phase 4: Persisting Progress and Halting
-1.  After a user story is fully implemented and you have generated your "Task Completed" summary, you **MUST** persist it.
+1.  After a user story is fully implemented and you have generated your "Task Completed" summary, you **MUST** persist it in `workflow/.mcp_history.md`.
 2.  Call the `log_task_completion` tool with one argument:
     *   `completion_report`: The full markdown text of your summary.
 3.  After a successful call, confirm to the user: "User Story #X is complete, and progress has been logged to `workflow/.mcp_history.md`."

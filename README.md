@@ -1,8 +1,6 @@
----
-
 # AI Project Forge - MCP Context Server
 
-This project provides a Model Context Protocol (MCP) server designed to act as a bridge between an AI coding agent (like Cline, Claude Desktop, or a custom tool) and your project management application (Tasksforge).
+This project provides a Model Context Protocol (MCP) server designed to act as a bridge between an AI coding agent (like Cline, Claude Desktop, or a custom tool) and The Project Managment Ai Assistant tasksforge.ai.
 
 It allows your AI agent to fetch detailed project context, including requirements, user stories, and dependencies, and then assists in implementing the project user story by user story, persisting the progress along the way.
 
@@ -12,13 +10,13 @@ It allows your AI agent to fetch detailed project context, including requirement
 -   **State Persistence**: Tracks the implementation progress of user stories in a local `.mcp_history.md` file.
 -   **Local Caching**: Saves the fetched project context to `.mcp_project_context.md` on the first run to speed up subsequent sessions.
 -   **Organized Workflow**: All agent-related files (history, context, prompts) are stored neatly within a `workflow` directory inside your project.
--   **Secure**: Validates that it only operates within a valid Git repository, preventing accidental writes to other parts of your system.
+-   **Secure**: Validates that it only operates within a valid Git repository, preventing accidental writes to other parts of your system, temporary token usage..
 
 ## How It Works
 
 The workflow is designed to be efficient and stateful:
 
-1.  **User Setup**: The developer configures their AI coding agent to use this MCP server, providing their Tasksforge secret key.
+1.  **User Setup**: The developer configures their AI coding agent to use this MCP server, providing their Tasksforge secret key in `https://www.tasksforge.ai/internalApp/settings`.
 2.  **First Run**: The agent, running in a project directory, detects that the local context is missing. It calls the MCP server to fetch project details from the Tasksforge API. The server then instructs the agent to save this context locally.
 3.  **Implementation**: Guided by the prompt in `workflow/prompt_implement_user_stories.md`, the agent helps the developer implement user stories incrementally.
 4.  **Logging Progress**: When a user story is complete, the agent calls the MCP server to save a timestamped completion report to `workflow/.mcp_history.md`.
@@ -47,10 +45,20 @@ cd MCP-tasksforge
 
 Install the required Python packages.
 
+In Celine you can ask in the AI chat to install the MCP-tasksforge directly from the repository project
+ ´´´
+ Hey Celine could you install this MCP server : @https://github.com/smirfolio/MCP-tasksforge
+ ´´´
+or manually: 
+
 ```bash
 pip install -r requirements.txt
 # or with uv
 uv pip install -r requirements.txt
+```
+TIPS: in dev enverenement set the env variables, than, you can start your MCP server with the command : 
+```bash
+uv run mcp dev server.py
 ```
 
 ### 4. Configure Server Environment
@@ -135,7 +143,11 @@ The agent will automatically:
 ### 4. Starting a New Session
 
 -   Simply start a new conversation with the agent in the same project directory.
+- Add the `workflow/` folder to the AI coding assistant context
 -   The agent will now find and read the local `workflow/.mcp_project_context.md` and `workflow/.mcp_history.md` files, giving it instant knowledge of the project's state without needing to call the API again.
+
+**Tips** After completing a user story, start a completely new chat session for the next one. Provide the AI with the relevant project files `workflow/` and ask it to summarize the work just completed and what remains.
+This significantly reduces token consumption, as the context in a single chat increases dramatically with each interaction.
 
 ## Server Tools Reference
 
