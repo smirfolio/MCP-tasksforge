@@ -1,6 +1,6 @@
-# AI Project Forge - MCP Context Server
+# TasksForge.ai - MCP Context Server
 
-This project provides a Model Context Protocol (MCP) server designed to act as a bridge between an AI coding agent (like Cline, Claude Desktop, or a custom tool) and The Project Managment Ai Assistant tasksforge.ai.
+This project provides a Model Context Protocol (MCP) server designed to act as a bridge between an AI coding agent (like Cline, Claude Desktop, or a custom tool) and the Project Management AI Assistant tasksforge.ai.
 
 It allows your AI agent to fetch detailed project context, including requirements, user stories, and dependencies, and then assists in implementing the project user story by user story, persisting the progress along the way.
 
@@ -157,3 +157,5 @@ The MCP server exposes the following tools for the AI agent to use:
 | :--- | :--- | :--- |
 | `get_project_context` | `project_id: int` | Fetches the full project context from the remote API. |
 | `log_task_completion` | `completion_report: str` | Appends a timestamped summary to `workflow/.mcp_history.md`. |
+
+Special thanks to [@CodingtheFuture](https://www.youtube.com/@CodingtheFuture-jg1he) for not only contributing amazing content but for inspiring and uplifting our entire community. 
