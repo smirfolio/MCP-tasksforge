@@ -126,11 +126,11 @@ async def get_project_context(project_id: int) -> str:
     logging.info(f"[Tool:get_project_context] Called for Project ID: {project_id}")
     
     secret_key = os.getenv("SECRET_KEY")
-    PROJECT_API_URL = os.getenv("PROJECT_API_URL", "https://tasksforge.ai/api/mcpproject")
+    PROJECT_API_URL = os.getenv("PROJECT_API_URL", "https://www.tasksforge.ai/api/mcpproject")
 
     if not secret_key or not PROJECT_API_URL:
         return "Error: Server is missing required environment variables (SECRET_KEY, PROJECT_API_URL)."
-    
+
     api_endpoint = f"{PROJECT_API_URL}/{project_id}"
     headers = {"Content-Type": "application/json", "sessionKey": secret_key}
     try:
