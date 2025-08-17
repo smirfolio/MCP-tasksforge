@@ -80,6 +80,7 @@ Your AI coding agent needs to know how to run this server. You will configure th
 ```
 
 - Celine AI agent must create the cline_mcp_settings.json bellow an example of the mcp json settings
+- Celine could ask you for your *Your temporary token* provide him with your secret and ask him to continue installing the MCP-server
 
 **Example Configuration in Celine AI Agent:**
 
@@ -103,6 +104,7 @@ Your AI coding agent needs to know how to run this server. You will configure th
     }
 }
 ```
+- At this point, a <Vscode/code/settings>/cline_mcp_settings.json, will be created and the server should be installed 
 
 **How to fill out the template:**
 
