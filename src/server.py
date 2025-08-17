@@ -200,6 +200,24 @@ def save_project_context(project_context: str) -> str:
             "file_path": str(context_file_path.relative_to(project_path))
         })
 
+# --- MODULE-LEVEL INITIALIZATION ---
+# This runs when the module is imported, which happens with `uv run mcp dev`
+def _perform_module_initialization():
+    """Initialize workflow directory when module is imported (for MCP dev server)"""
+    try:
+        logging.info("[Module Init] Performing module-level initialization...")
+        init_result = initialize_workflow_directory()
+        logging.info(f"[Module Init] Initialization result: {json.dumps(init_result, indent=2)}")
+        
+        if init_result["success"]:
+            logging.info("[Module Init] ✅ Workflow initialization completed successfully")
+        else:
+            logging.error(f"[Module Init] ❌ Workflow initialization failed: {init_result.get('error', 'Unknown error')}")
+    except Exception as e:
+        logging.error(f"[Module Init] Exception during module initialization: {e}")
+        import traceback
+        logging.error(f"[Module Init] Full traceback: {traceback.format_exc()}")
+
 # --- MCP TOOLS (Protocol Compliant) ---
 
 @mcp.tool()
@@ -367,19 +385,15 @@ def log_task_completion(completion_report: str) -> str:
             "file_path": str(history_file_path.relative_to(project_path))
         })
 
+# --- MODULE INITIALIZATION (Runs when imported by MCP dev server) ---
+_perform_module_initialization()
+
 # --- MAIN FUNCTION ---
 async def main():
     """Main entry point (Protocol Compliant)"""
+
     try:
         logging.info("[Setup] AI Project Forge Context Server starting...")
-        
-        # Initialize workflow directory on startup
-        init_result = initialize_workflow_directory()
-        if init_result["success"]:
-            logging.info("[Setup] Workflow initialization completed successfully")
-        else:
-            logging.warning(f"[Setup] Workflow initialization had issues: {init_result.get('error', 'Unknown')}")
-        
         # Start the MCP server
         logging.info("[Setup] Starting MCP server on stdio...")
         await mcp.run()
