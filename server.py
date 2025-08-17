@@ -10,7 +10,13 @@ from collections.abc import AsyncIterator
 
 from mcp.server.fastmcp import FastMCP
 
-load_dotenv()
+# Optional: Load .env file if python-dotenv is available
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 
 # --- Setup ---
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -21,6 +27,10 @@ WORKFLOW_DIR_NAME = "workflow"
 HISTORY_FILENAME = ".mcp_history.md"
 CONTEXT_FILENAME = ".mcp_project_context.md"
 SYSTEM_PROMPT_FILENAME = "prompt_implement_user_stories.md"
+# --- Environment Variables ---
+PROJECT_DIRECTORY = os.getenv("PROJECT_DIRECTORY")
+SECRET_KEY = os.getenv("SECRET_KEY")
+PROJECT_API_URL = os.getenv("PROJECT_API_URL", "https://www.tasksforge.ai/api/mcpproject")
 
 # --- I/O & HELPER FUNCTIONS ---
 
@@ -61,7 +71,7 @@ def is_safe_project_path(dir_path_str: str) -> bool:
 def save_project_context(project_context: str) -> str:
     """Saves the project context to a standard file in the project's workflow directory."""
     logging.info("[Tool:save_project_context] Called.")
-    project_directory = os.getenv("PROJECT_DIRECTORY")
+    project_directory = PROJECT_DIRECTORY
 
     if not project_directory or not is_safe_project_path(project_directory):
         return "Error: Cannot save context. The project_directory is invalid or not set."
@@ -81,7 +91,7 @@ async def server_lifespan(server: FastMCP) -> AsyncIterator[None]:
     It handles the automatic initialization of the workflow directory and prompt.
     """
     logging.info("[Lifespan] Server starting up. Running workflow initialization...")
-    project_directory = os.getenv("PROJECT_DIRECTORY")
+    project_directory = PROJECT_DIRECTORY
 
     if not project_directory or not is_safe_project_path(project_directory):
         logging.error("[Lifespan] Startup check failed: PROJECT_DIRECTORY is invalid or not set.")
@@ -125,9 +135,8 @@ async def get_project_context(project_id: int) -> str:
     """
     logging.info(f"[Tool:get_project_context] Called for Project ID: {project_id}")
     
-    secret_key = os.getenv("SECRET_KEY")
-    PROJECT_API_URL = os.getenv("PROJECT_API_URL", "https://www.tasksforge.ai/api/mcpproject")
-
+    secret_key = SECRET_KEY
+    
     if not secret_key or not PROJECT_API_URL:
         return "Error: Server is missing required environment variables (SECRET_KEY, PROJECT_API_URL)."
 
@@ -169,7 +178,7 @@ async def get_project_context(project_id: int) -> str:
 def log_task_completion(completion_report: str) -> str:
     """Appends a timestamped report to the history file in the project's workflow directory."""
     logging.info("[Tool:log_task_completion] Called.")
-    project_directory = os.getenv("PROJECT_DIRECTORY")
+    project_directory = PROJECT_DIRECTORY
     
     if not project_directory or not is_safe_project_path(project_directory):
         return "Error: Cannot log progress. The project_directory is invalid or not set."
