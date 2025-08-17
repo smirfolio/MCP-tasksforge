@@ -2,7 +2,7 @@
 
 This project provides a Model Context Protocol (MCP) server designed to act as a bridge between an AI coding agent (like Cline, Claude Desktop, or a custom tool) and the Project Management AI Assistant tasksforge.ai.
 
-It allows your AI agent to fetch detailed project context, including requirements, user stories, and dependencies, and then assists in implementing the project user story by user story, persisting the progress along the way.
+It allows your AI agent to fetch detailed project context once, including requirements, user stories, and dependencies, and then assists in implementing the project user story by user story, persisting the progress along the way.
 
 ## Features
 
@@ -10,7 +10,6 @@ It allows your AI agent to fetch detailed project context, including requirement
 -   **State Persistence**: Tracks the implementation progress of user stories in a local `.mcp_history.md` file.
 -   **Local Caching**: Saves the fetched project context to `.mcp_project_context.md` on the first run to speed up subsequent sessions.
 -   **Organized Workflow**: All agent-related files (history, context, prompts) are stored neatly within a `workflow` directory inside your project.
--   **Secure**: Validates that it only operates within a valid Git repository, preventing accidental writes to other parts of your system, temporary token usage..
 
 ## How It Works
 
@@ -20,7 +19,7 @@ The workflow is designed to be efficient and stateful:
 2.  **First Run**: The agent, running in a project directory, detects that the local context is missing. It calls the MCP server to fetch project details from the Tasksforge API. The server then instructs the agent to save this context locally.
 3.  **Implementation**: Guided by the prompt in `workflow/prompt_implement_user_stories.md`, the agent helps the developer implement user stories incrementally.
 4.  **Logging Progress**: When a user story is complete, the agent calls the MCP server to save a timestamped completion report to `workflow/.mcp_history.md`.
-5.  **Subsequent Runs**: On the next run, the agent loads the context and history directly from the local `workflow` directory, avoiding unnecessary API calls and immediately knowing the project's current state.
+5.  **Subsequent Runs**: On the next run, the agent loads the context and history directly from the local `workflow` directory, avoiding unnecessary API calls and immediately knowing the project's current state. No need to call the get_project_context again, but the log_task_completion tools would be availbale to persist AI Coding Agent completed tasks report
 
 ## Setup and Installation
 
@@ -28,9 +27,9 @@ Follow these steps to get the MCP server ready to be used by your AI agent.
 
 ### 1. Prerequisites
 
--   Python 3.10+
--   `pip` or `uv` for package management
--   An AI coding agent that supports MCP server configuration (e.g., Cline).
+-  Python 3.10+
+-  `uv` for package management
+-  An AI coding agent that supports MCP server configuration (e.g., Cline).
 
 ### 2. Clone the Server Repository
 
@@ -52,28 +51,27 @@ In Celine you can ask in the AI chat to install the MCP-tasksforge directly from
 or manually: 
 
 ```bash
-pip install -r requirements.txt
-# or with uv
-uv pip install -r requirements.txt
+git clone git@github.com:smirfolio/MCP-tasksforge.git
 ```
-TIPS: in dev enverenement set the env variables, than, you can start your MCP server with the command : 
+
+TIPS: Set the env variables, than, you can start your MCP server in dev mode, with the command : 
 ```bash
 uv run mcp dev server.py
 ```
 
-### 4. Configure Server Environment
+### 4. Configure Server Environment runing Standalone MCP-server
 
 The server needs the URL of your project management API. Create a `.env` file in the `MCP-tasksforge` directory.
+Get the personal secret key from Tasksforge.ai in `https://www.tasksforge.ai/internalApp/settings` -> *Your temporary token*.
 
 Create a file named `.env`:
 
 ```dotenv
-# .env for the MCP Server
-# This is the your project working directory.
 PROJECT_DIRECTORY="<absolute apth to your project working directory>"
+SECRET_KEY="your_super_secret_key_12345_that_is_long_and_complex"
 ```
 
-## Configuration for Your AI Agent
+## Configuration for Your AI Agent, exp: Celine chat AI
 
 Your AI coding agent needs to know how to run this server. You will configure this in your agent's settings, typically in a JSON configuration file. Here is a template based on the provided format.
 You can ask also your Celine agent to implement the MCP server : 
@@ -92,7 +90,7 @@ You can ask also your Celine agent to implement the MCP server :
                 "run",
                 "mcp",
                 "run",
-                "<PROJECT_DIRECTORY>/MCP-tasksforge/server.py"
+                "<TO-MCP-SERVER-FOLDER>/MCP-tasksforge/src/server.py"
             ],
             "env": {
                 "SECRET_KEY": "<Your TAsksforge Secret JWT>",
@@ -105,9 +103,7 @@ You can ask also your Celine agent to implement the MCP server :
 
 **How to fill out the template:**
 
--   `"name"`: A user-friendly name for the server, like "AI Project Forge".
--   `"command"` and `"args"`: The command to run the server. The example uses `uv` and `mcp run`.
--   `<PROJECT_DIRECTORY>`: Replace this with the **absolute path** to the directory where you cloned `MCP-tasksforge`.
+-   `<TO-MCP-SERVER-FOLDER>`: Replace this with the **absolute path** to the directory where you cloned `MCP-tasksforge`.
 -   `"env"`: This is the most important part.
     -   `"SECRET_KEY"`: Replace `<Your TAsksforge Secret JWT>` with the **full JWT** you obtain from your Tasksforge application's user settings.
     -   `"PROJECT_DIRECTORY"`: The value `{project_dir}` is a special placeholder that your AI agent (like Cline) should dynamically replace with the **absolute path of the project folder you are currently working in**. This tells the server where to create the `workflow` directory.
