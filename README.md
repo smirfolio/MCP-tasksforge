@@ -74,11 +74,14 @@ SECRET_KEY="your_super_secret_key_12345_that_is_long_and_complex"
 ## Configuration for Your AI Agent, exp: Celine chat AI
 
 Your AI coding agent needs to know how to run this server. You will configure this in your agent's settings, typically in a JSON configuration file. Here is a template based on the provided format.
-You can ask also your Celine agent to implement the MCP server : 
+- You can ask also your Celine agent to implement the MCP server : 
 ```BASH
  Hey Cline, add this MCP server from @https://github.com/smirfolio/MCP-tasksforge
 ```
-**`mcp.json` (Example Configuration in your AI Agent):**
+
+- Celine AI agent must create the cline_mcp_settings.json bellow an example of the mcp json settings
+
+**Example Configuration in Celine AI Agent:**
 
 ```json
 {
