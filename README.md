@@ -71,16 +71,24 @@ PROJECT_DIRECTORY="<absolute apth to your project working directory>"
 SECRET_KEY="your_super_secret_key_12345_that_is_long_and_complex"
 ```
 
-## Configuration for Your AI Agent, exp: Celine chat AI
+## Cline Integration
 
 Your AI coding agent needs to know how to run this server. You will configure this in your agent's settings, typically in a JSON configuration file. Here is a template based on the provided format.
-- You can ask also your Celine agent to implement the MCP server : 
+
+- You can ask your Celine agent to implement the MCP server : 
+
 ```BASH
  Hey Cline, add this MCP server from @https://github.com/smirfolio/MCP-tasksforge
 ```
+- Celine AI agent will clone the MCP-tasksforge into the current working directory
 
-- Celine AI agent must create the cline_mcp_settings.json bellow an example of the mcp json settings
-- Celine could ask you for your *Your temporary token* provide him with your secret and ask him to continue installing the MCP-server
+- Open your the Cline MCP settings file:
+
+    - macOS: `~/Library/Application Support/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json`
+    - Windows: `%APPDATA%/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json`
+    - Linux: `~/.config/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json`
+
+- Celine AI agent must create the cline_mcp_settings.json bellow an example of the mcp json settings, the \<TO-MCP-SERVER-FOLDER\> may be the current working directory
 
 **Example Configuration in Celine AI Agent:**
 
@@ -104,7 +112,8 @@ Your AI coding agent needs to know how to run this server. You will configure th
     }
 }
 ```
-- At this point, a <Vscode/code/settings>/cline_mcp_settings.json, will be created and the server should be installed 
+
+- Celine may ask you for your *Your temporary token* provide him with your secret and ask him to continue installing the MCP-server
 
 **How to fill out the template:**
 
