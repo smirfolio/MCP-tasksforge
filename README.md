@@ -44,9 +44,9 @@ cd MCP-tasksforge
 
 Install the required Python packages.
 
-In Celine you can ask in the AI chat to install the MCP-tasksforge directly from the repository project
+In Celine, you can ask in the AI chat to install the MCP-tasksforge directly from the repository project
  ´´´
- Hey Celine could you install this MCP server : @https://github.com/smirfolio/MCP-tasksforge
+ Hey Celine could you install this MCP server: @https://github.com/smirfolio/MCP-tasksforge
  ´´´
 or manually: 
 
@@ -54,12 +54,12 @@ or manually:
 git clone git@github.com:smirfolio/MCP-tasksforge.git
 ```
 
-TIPS: Set the env variables, than, you can start your MCP server in dev mode, with the command : 
+TIPS: Set the env variables, then you can start your MCP server in dev mode, with the command : 
 ```bash
 uv run mcp dev server.py
 ```
 
-### 4. Configure Server Environment runing Standalone MCP-server
+### 4. Configure the Server Environment running the Standalone MCP-server
 
 The server needs the URL of your project management API. Create a `.env` file in the `MCP-tasksforge` directory.
 Get the personal secret key from Tasksforge.ai in `https://www.tasksforge.ai/internalApp/settings` -> *Your temporary token*.
@@ -82,7 +82,7 @@ Your AI coding agent needs to know how to run this server. You will configure th
 ```
 - Celine AI agent will clone the MCP-tasksforge into the current working directory
 
-- Open your the Cline MCP settings file:
+- Open the Cline MCP settings file:
 
     - macOS: `~/Library/Application Support/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json`
     - Windows: `%APPDATA%/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json`
@@ -113,7 +113,7 @@ Your AI coding agent needs to know how to run this server. You will configure th
 }
 ```
 
-- Celine may ask you for your *Your temporary token* provide him with your secret and ask him to continue installing the MCP-server
+- Celine may ask you for your *Your temporary token*, provide him with your secret, and ask him to continue installing the MCP-server
 
 **How to fill out the template:**
 
@@ -122,7 +122,7 @@ Your AI coding agent needs to know how to run this server. You will configure th
     -   `"SECRET_KEY"`: Replace `<Your TAsksforge Secret JWT>` with the **full JWT** you obtain from your Tasksforge application's user settings.
     -   `"PROJECT_DIRECTORY"`: The value `{project_dir}` is a special placeholder that your AI agent (like Cline) should dynamically replace with the **absolute path of the project folder you are currently working in**. This tells the server where to create the `workflow` directory.
 
-You able now to ask your AI Agent to restart the MCP server
+You are now able to ask your AI Agent to restart the MCP server
 
 ## Usage Workflow
 
@@ -133,7 +133,7 @@ Once configured, using the server via your AI agent is simple.
 1.  Open a terminal in the root of your project folder (e.g., `~/my-cool-app`).
 2.  Make sure it's a Git repository (`git init` if it's not).
 3.  Start a conversation with your AI agent and ask it to work on the project, providing the project ID. For example:
-    > "Let's start working on project 478."
+    > "Hey, Celine, fetch the project 478." or "Fetch the project 478 for the context."
 
 The agent will automatically:
 -   Call the MCP server to fetch the context from the API and will save this context to `workflow/.mcp_project_context.md`.
