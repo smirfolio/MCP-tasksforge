@@ -71,6 +71,32 @@ PROJECT_DIRECTORY="<absolute apth to your project working directory>"
 SECRET_KEY="your_super_secret_key_12345_that_is_long_and_complex"
 ```
 
+## Claude Integration
+one the installation package installed (uc, claude, mcp[cli]), you can follow these steps:
+```BASH
+git clone git@github.com:smirfolio/MCP-tasksforge.git
+
+#in your project directory: 
+git init
+ 
+claude mcp add MCP-tasksforge --env PROJECT_DIRECTORY=<folder project deriectory> SECRET_KEY="<Your TAsksforge Secret JWT>" -- uv run mcp run <path to mcp-server>/MCP-tasksforge/src/server.py
+
+#verify the server is connect : 
+claude mcp list 
+
+# Response : 
+~# Checking MCP server health...
+~# MCP-tasksforge: uv run mcp run MCP-tasksforge/src/server.py - ✓ Connected
+
+#now you cane start your claude coding agent in your project directory:: 
+claude .
+```
+At this point you can start fetching your projects detail from the tasksForge.ai 
+``` BASH
+Fetch the project {id} context
+```
+This would fetch the project and save the details into  `workflow/.mcp_project_context.md`
+
 ## Cline Integration
 
 Your AI coding agent needs to know how to run this server. You will configure this in your agent's settings, typically in a JSON configuration file. Here is a template based on the provided format.
@@ -153,7 +179,7 @@ The agent will automatically:
 ### 4. Starting a New Session
 
 -   Simply start a new conversation with the agent in the same project directory.
-- Add the `workflow/` folder to the AI coding assistant context
+-   Add the `workflow/` folder to the AI coding assistant context
 -   The agent will now find and read the local `workflow/.mcp_project_context.md` and `workflow/.mcp_history.md` files, giving it instant knowledge of the project's state without needing to call the API again.
 
 **Tips** After completing a user story, start a completely new chat session for the next one. Provide the AI with the relevant project files `workflow/` and ask it to summarize the work just completed and what remains.
