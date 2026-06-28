@@ -312,6 +312,12 @@ async def get_project_context(project_id: int) -> str:
 ## User Stories
 {project_data.get('elaborated_user_stories', 'N/A')}
 
+ ## Schema Design (Markdown + SQL DDL)
+{project_data.get('schema_design', 'N/A')}
+
+## Webflow / UI Flow (Markdown + Mermaid + Wireframes)
+{project_data.get('webflow_ui', 'N/A')}
+
 ## Detailed Task List
 ```json
 {json.dumps(project_data.get('tasks_list', []), indent=2)}
